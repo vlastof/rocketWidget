@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <meta charset='utf-8'>
+  <head>
+    <style type="text/css">
+    canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #1A70C6;
+    }
+    </style>
+    <title>rocketWidget</title>
+  </head>
+  <body>
+    <canvas id="canvas" width="100" height="100">Обновите браузер</canvas>
+    <script>
+    const FPS = 60;
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth/2;
+    let rocket = {
+      img: new Image(),
+      x: 0,
+      y: 0,
+      speed: 5,
+      width: 100,
+      height: 100,
+      isLowering: false,
+      degrees: 0,
+      rotateLeft: false,
+      doRotate: false,
+      rotateSpeed: 10,
+      animate () {
+        if (this.degrees == -90 || this.degrees == 90){
+          this.doRotate =false;
+        }
+        if(this.x === canvas.width-this.width){
+          this.isLowering = true;
+          this.rotateLeft = true;
+          this.doRotate = true;
+        }
+        if(this.x===0){
+          this.isLowering = false;
+          this.rotateLeft = false;
+          this.doRotate = true;
+        }
+        if(this.isLowering){
+          this.x-=this.speed;
+        }
+        else{
+          this.x+=this.speed;
+        }
+        if(this.rotateLeft && this.doRotate){
+          this.degrees -=this.rotateSpeed;
+        }
+        if((!this.rotateLeft) && this.doRotate){
+          this.degrees +=this.rotateSpeed;
+        }
+      }
+      }
+    rocket.img.src = 'rocket.png';
+    setInterval(()=> {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.save();
+    ctx.translate(rocket.x+rocket.width/2,
+                  rocket.y+rocket.height/2);
+    ctx.rotate(rocket.degrees*Math.PI/180);
+    ctx.drawImage(rocket.img,
+                  -rocket.width/2,
+                  -rocket.height/2, 
+                  rocket.width, 
+                  rocket.height);
+    ctx.restore();
+    rocket.animate();
+    },1000/FPS);
+    </script>
+  </body>
+</html>
